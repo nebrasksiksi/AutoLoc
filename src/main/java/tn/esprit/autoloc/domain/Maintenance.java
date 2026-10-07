@@ -7,14 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-
+import lombok.Data;
 @Entity
 @Table(name = "maintenance")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Maintenance {
+    @ManyToOne
+    @JoinColumn(name = "id_vehicule")
+    private Vehicule vehicule;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

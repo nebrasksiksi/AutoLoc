@@ -7,14 +7,32 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-
+import java.util.List;
+import lombok.Data;
 @Entity
 @Table(name = "vehicule")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vehicule {
+
+    @ManyToOne
+    @JoinColumn(name = "id_agence")
+    private Agence agence;
+
+    @OneToMany(mappedBy = "vehicule")
+    private List<Maintenance> maintenances;
+
+    @ManyToMany
+    @JoinTable(
+            name = "vehicule_equipement",
+            joinColumns = @JoinColumn(name = "id_vehicule"),
+            inverseJoinColumns = @JoinColumn(name = "id_equipement")
+    )
+    private List<Equipement> equipements;
+
+    @OneToMany(mappedBy = "vehicule")
+    private List<Reservation> reservations;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

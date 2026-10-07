@@ -5,14 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import lombok.Data;
 @Entity
 @Table(name = "employe")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employe {
+    @ManyToOne
+    @JoinColumn(name = "id_agence")
+    private Agence agence;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

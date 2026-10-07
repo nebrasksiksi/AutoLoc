@@ -8,14 +8,20 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+import lombok.Data;
 @Entity
 @Table(name = "contrat")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Contrat {
+
+    @OneToOne
+    @JoinColumn(name = "id_reservation")
+    private Reservation reservation;
+
+    @OneToOne(mappedBy = "contrat")
+    private Paiement paiement;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,16 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.List;
 
+import lombok.Data;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "client")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client {
+
+    @OneToMany(mappedBy = "client")
+    private List<Reservation> reservations;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

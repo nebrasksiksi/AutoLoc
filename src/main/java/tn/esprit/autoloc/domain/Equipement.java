@@ -5,14 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.util.List;
+import lombok.Data;
 @Entity
 @Table(name = "equipement")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Equipement {
+
+    @ManyToMany(mappedBy = "equipements")
+    private List<Vehicule> vehicules;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

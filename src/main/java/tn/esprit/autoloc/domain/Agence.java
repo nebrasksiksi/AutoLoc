@@ -5,14 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.util.List;
+import lombok.Data;
 @Entity
 @Table(name = "agence")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Agence {
+    @OneToMany(mappedBy = "agence")
+    private List<Employe> employes;
+
+    @OneToMany(mappedBy = "agence")
+    private List<Vehicule> vehicules;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

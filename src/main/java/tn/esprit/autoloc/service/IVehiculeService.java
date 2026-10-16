@@ -1,4 +1,7 @@
+
 package tn.esprit.autoloc.service;
 
-public interface IVehiculeService {
+import tn.esprit.autoloc.domain.Vehicule;
+
+public interface IVehiculeService extends ICrudService<Vehicule> {
 }

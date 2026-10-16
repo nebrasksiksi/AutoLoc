@@ -1,4 +1,8 @@
+
 package tn.esprit.autoloc.service;
 
-public interface IMaintenanceService {
+import tn.esprit.autoloc.domain.Maintenance;
+
+public interface IMaintenanceService
+        extends ICrudService<Maintenance> {
 }

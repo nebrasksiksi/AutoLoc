@@ -1,4 +1,8 @@
+
 package tn.esprit.autoloc.service;
 
-public interface IReservationService {
+import tn.esprit.autoloc.domain.Reservation;
+
+public interface IReservationService
+        extends ICrudService<Reservation> {
 }

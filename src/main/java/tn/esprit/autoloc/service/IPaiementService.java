@@ -1,4 +1,8 @@
+
 package tn.esprit.autoloc.service;
 
-public interface IPaiementService {
+import tn.esprit.autoloc.domain.Paiement;
+
+public interface IPaiementService
+        extends ICrudService<Paiement> {
 }

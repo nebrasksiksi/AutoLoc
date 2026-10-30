@@ -1,48 +1,53 @@
-
 package tn.esprit.autoloc.web.controller;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Paiement;
+import tn.esprit.autoloc.dto.PaiementDTO;
+import tn.esprit.autoloc.mapper.PaiementMapper;
 import tn.esprit.autoloc.service.IPaiementService;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/paiements")
 public class PaiementController {
     private final IPaiementService service;
+    private final PaiementMapper mapper;
 
-    public PaiementController(IPaiementService service) {
+    public PaiementController(IPaiementService service, PaiementMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping
-    public ResponseEntity<Paiement> ajouter(@RequestBody Paiement e) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.ajouter(e));
+    @ResponseStatus(HttpStatus.CREATED)
+    public PaiementDTO ajouter(@Valid @RequestBody PaiementDTO dto) {
+        return mapper.toDTO(service.ajouter(mapper.toEntity(dto)));
     }
 
     @GetMapping
-    public List<Paiement> afficherTous() {
-        return service.afficherTous();
+    public List<PaiementDTO> afficherTous() {
+        return service.afficherTous().stream().map(mapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Paiement> chercherParId(
-            @PathVariable Long id) {
-        return service.chercherParId(id).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public PaiementDTO chercherParId(@PathVariable Long id) {
+        Paiement paiement = service.chercherParId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paiement introuvable : " + id));
+        return mapper.toDTO(paiement);
     }
 
     @PutMapping
-    public Paiement modifier(@RequestBody Paiement e) {
-        return service.modifier(e);
+    public PaiementDTO modifier(@Valid @RequestBody PaiementDTO dto) {
+        return mapper.toDTO(service.modifier(mapper.toEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> supprimer(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void supprimer(@PathVariable Long id) {
         service.supprimer(id);
-        return ResponseEntity.noContent().build();
     }
 }

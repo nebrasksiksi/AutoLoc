@@ -1,48 +1,53 @@
-
 package tn.esprit.autoloc.web.controller;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Equipement;
+import tn.esprit.autoloc.dto.EquipementDTO;
+import tn.esprit.autoloc.mapper.EquipementMapper;
 import tn.esprit.autoloc.service.IEquipementService;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/equipements")
 public class EquipementController {
     private final IEquipementService service;
+    private final EquipementMapper mapper;
 
-    public EquipementController(IEquipementService service) {
+    public EquipementController(IEquipementService service, EquipementMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping
-    public ResponseEntity<Equipement> ajouter(@RequestBody Equipement e) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.ajouter(e));
+    @ResponseStatus(HttpStatus.CREATED)
+    public EquipementDTO ajouter(@Valid @RequestBody EquipementDTO dto) {
+        return mapper.toDTO(service.ajouter(mapper.toEntity(dto)));
     }
 
     @GetMapping
-    public List<Equipement> afficherTous() {
-        return service.afficherTous();
+    public List<EquipementDTO> afficherTous() {
+        return service.afficherTous().stream().map(mapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Equipement> chercherParId(
-            @PathVariable Long id) {
-        return service.chercherParId(id).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public EquipementDTO chercherParId(@PathVariable Long id) {
+        Equipement equipement = service.chercherParId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Équipement introuvable : " + id));
+        return mapper.toDTO(equipement);
     }
 
     @PutMapping
-    public Equipement modifier(@RequestBody Equipement e) {
-        return service.modifier(e);
+    public EquipementDTO modifier(@Valid @RequestBody EquipementDTO dto) {
+        return mapper.toDTO(service.modifier(mapper.toEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> supprimer(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void supprimer(@PathVariable Long id) {
         service.supprimer(id);
-        return ResponseEntity.noContent().build();
     }
 }

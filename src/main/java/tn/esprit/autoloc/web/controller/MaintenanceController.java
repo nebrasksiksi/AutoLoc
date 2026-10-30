@@ -1,49 +1,53 @@
-
 package tn.esprit.autoloc.web.controller;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Maintenance;
+import tn.esprit.autoloc.dto.MaintenanceDTO;
+import tn.esprit.autoloc.mapper.MaintenanceMapper;
 import tn.esprit.autoloc.service.IMaintenanceService;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/maintenances")
 public class MaintenanceController {
     private final IMaintenanceService service;
+    private final MaintenanceMapper mapper;
 
-    public MaintenanceController(IMaintenanceService service) {
+    public MaintenanceController(IMaintenanceService service, MaintenanceMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping
-    public ResponseEntity<Maintenance> ajouter(
-            @RequestBody Maintenance e) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.ajouter(e));
+    @ResponseStatus(HttpStatus.CREATED)
+    public MaintenanceDTO ajouter(@Valid @RequestBody MaintenanceDTO dto) {
+        return mapper.toDTO(service.ajouter(mapper.toEntity(dto)));
     }
 
     @GetMapping
-    public List<Maintenance> afficherTous() {
-        return service.afficherTous();
+    public List<MaintenanceDTO> afficherTous() {
+        return service.afficherTous().stream().map(mapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Maintenance> chercherParId(
-            @PathVariable Long id) {
-        return service.chercherParId(id).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public MaintenanceDTO chercherParId(@PathVariable Long id) {
+        Maintenance maintenance = service.chercherParId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Maintenance introuvable : " + id));
+        return mapper.toDTO(maintenance);
     }
 
     @PutMapping
-    public Maintenance modifier(@RequestBody Maintenance e) {
-        return service.modifier(e);
+    public MaintenanceDTO modifier(@Valid @RequestBody MaintenanceDTO dto) {
+        return mapper.toDTO(service.modifier(mapper.toEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> supprimer(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void supprimer(@PathVariable Long id) {
         service.supprimer(id);
-        return ResponseEntity.noContent().build();
     }
 }

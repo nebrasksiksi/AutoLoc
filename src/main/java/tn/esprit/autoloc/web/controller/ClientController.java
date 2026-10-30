@@ -1,12 +1,11 @@
-
 package tn.esprit.autoloc.web.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Client;
+import tn.esprit.autoloc.dto.ClientDTO;
+import tn.esprit.autoloc.mapper.ClientMapper;
 import tn.esprit.autoloc.service.IClientService;
 
 import java.util.List;
@@ -14,55 +13,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/clients")
 public class ClientController {
-
     private final IClientService service;
+    private final ClientMapper mapper;
 
-    public ClientController(IClientService service) {
+    public ClientController(IClientService service, ClientMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
-    @Operation(summary = "Lister tous les clients")
-    @ApiResponse(responseCode = "200", description = "Liste récupérée")
     @GetMapping
-    public List<Client> getAll() {
-        return service.getAll();
+    public List<ClientDTO> getAll() {
+        return service.getAll().stream().map(mapper::toDTO).toList();
     }
 
-    @Operation(summary = "Récupérer un client par son identifiant")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Client trouvé"),
-            @ApiResponse(responseCode = "404", description = "Client introuvable")
-    })
     @GetMapping("/{id}")
-    public Client getById(@PathVariable Long id) {
-        return service.getById(id);
+    public ClientDTO getById(@PathVariable Long id) {
+        return mapper.toDTO(service.getById(id));
     }
 
-    @Operation(summary = "Créer un client")
-    @ApiResponse(responseCode = "201", description = "Client créé")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Client create(@RequestBody Client client) {
-        return service.create(client);
+    public ClientDTO create(@Valid @RequestBody ClientDTO dto) {
+        Client client = service.create(mapper.toEntity(dto));
+        return mapper.toDTO(client);
     }
 
-    @Operation(summary = "Modifier un client")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Client modifié"),
-            @ApiResponse(responseCode = "404", description = "Client introuvable")
-    })
     @PutMapping("/{id}")
-    public Client update(
-            @PathVariable Long id,
-            @RequestBody Client client) {
-        return service.update(id, client);
+    public ClientDTO update(@PathVariable Long id, @Valid @RequestBody ClientDTO dto) {
+        return mapper.toDTO(service.update(id, mapper.toEntity(dto)));
     }
 
-    @Operation(summary = "Supprimer un client")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Client supprimé"),
-            @ApiResponse(responseCode = "404", description = "Client introuvable")
-    })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

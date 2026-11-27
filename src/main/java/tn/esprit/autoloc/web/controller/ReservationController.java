@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Reservation;
 import tn.esprit.autoloc.dto.ReservationDTO;
+import tn.esprit.autoloc.dto.ReservationResponseDTO;
+import tn.esprit.autoloc.dto.ReservationWithContratRequestDTO;
 import tn.esprit.autoloc.mapper.ReservationMapper;
 import tn.esprit.autoloc.service.IReservationService;
 
@@ -43,6 +45,19 @@ public class ReservationController {
     @PutMapping
     public ReservationDTO modifier(@Valid @RequestBody ReservationDTO dto) {
         return mapper.toDTO(service.modifier(mapper.toEntity(dto)));
+    }
+
+    @PutMapping("/{id}/client")
+    public ReservationResponseDTO affecterClient(@PathVariable Long id,
+                                                  @RequestParam String nom,
+                                                  @RequestParam String prenom) {
+        return service.affecterReservationAClient(id, nom, prenom);
+    }
+
+    @PostMapping("/avec-contrat")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReservationResponseDTO creerAvecContrat(@Valid @RequestBody ReservationWithContratRequestDTO requestDTO) {
+        return service.creerReservationEtContratAssocie(requestDTO);
     }
 
     @DeleteMapping("/{id}")

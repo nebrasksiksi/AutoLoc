@@ -38,6 +38,18 @@ public class VehiculeController {
         return mapper.toDTO(vehicule);
     }
 
+    @PutMapping("/{id}/equipements/{idEquipement}")
+    public VehiculeDTO affecterEquipement(@PathVariable Long id,
+                                          @PathVariable Long idEquipement) {
+        return service.affecterVehiculeAEquipement(id, idEquipement);
+    }
+
+    @PostMapping("/maintenance")
+    public VehiculeDTO affecterMaintenance(@RequestParam String description,
+                                           @RequestParam String immatriculation) {
+        return service.affecterMaintenanceAvehicule(description, immatriculation);
+    }
+
     @PutMapping("/{id}")
     public VehiculeDTO update(@PathVariable Long id, @Valid @RequestBody VehiculeDTO dto) {
         return mapper.toDTO(service.update(id, mapper.toEntity(dto)));

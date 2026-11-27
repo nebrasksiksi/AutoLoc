@@ -1,0 +1,14 @@
+{
+  "info": {
+    "name": "AutoLoc - 5 services d'affectation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8081"}],
+  "item": [
+    {"name": "1 - Affecter réservation à client", "request": {"method": "PUT", "url": "{{baseUrl}}/api/reservations/1/client?nom=Ben%20Ali&prenom=Ahmed"}},
+    {"name": "2 - Affecter équipement à véhicule", "request": {"method": "PUT", "url": "{{baseUrl}}/api/vehicules/1/equipements/1"}},
+    {"name": "3 - Affecter maintenance à véhicule", "request": {"method": "POST", "url": "{{baseUrl}}/api/vehicules/maintenance?description=Vidange%20et%20changement%20du%20filtre&immatriculation=123%20TU%20456"}},
+    {"name": "4 - Affecter contrat à réservation", "request": {"method": "POST", "url": "{{baseUrl}}/api/contrats/affecter-reservation?dateSignature=2026-11-22&dateDebut=2026-11-23&dateFin=2026-11-30"}},
+    {"name": "5 - Créer réservation et contrat associé", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"vehiculeId\": 1,\n  \"clientId\": 1,\n  \"dateDebut\": \"2026-11-23\",\n  \"dateFin\": \"2026-11-30\",\n  \"statut\": \"EN_ATTENTE\",\n  \"dateSignature\": \"2026-11-22\",\n  \"valide\": true\n}"}, "url": "{{baseUrl}}/api/reservations/avec-contrat"}}
+  ]
+}
